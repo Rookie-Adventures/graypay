@@ -1,4 +1,7 @@
 export const dynamic = 'force-dynamic';
+export const runtime = 'edge';
+
+import { getRequestContext } from '@cloudflare/next-on-pages/runtime';
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -10,8 +13,15 @@ export async function GET(req: Request) {
     );
   }
 
-  const backendUrl = process.env.MAIN_BACKEND_URL;
-  const internalToken = process.env.PAY_PROXY_TOKEN || '';
+  let cfEnv: Record<string, string> | undefined;
+  try {
+    cfEnv = getRequestContext().env as Record<string, string>;
+  } catch {
+    cfEnv = undefined;
+  }
+
+  const backendUrl = (cfEnv?.MAIN_BACKEND_URL as string) || process.env.MAIN_BACKEND_URL;
+  const internalToken = (cfEnv?.PAY_PROXY_TOKEN as string) || process.env.PAY_PROXY_TOKEN || '';
 
   if (!backendUrl || !internalToken) {
     return new Response(

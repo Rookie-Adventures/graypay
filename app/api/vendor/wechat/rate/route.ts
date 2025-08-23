@@ -1,9 +1,21 @@
 export const dynamic = 'force-dynamic';
+export const runtime = 'edge';
+
+import { getRequestContext } from '@cloudflare/next-on-pages/runtime';
 
 let cachedRate: { value: number; expires: number } | null = null;
 
+function readEnv(key: string): string | undefined {
+  try {
+    const env = getRequestContext().env as Record<string, string>;
+    return env?.[key];
+  } catch {
+    return (process.env as Record<string, string | undefined>)[key];
+  }
+}
+
 async function fetchVendorRate(): Promise<number | null> {
-  const url = process.env.WECHAT_RATE_URL || 'http://pay.noveltypay.com/wechatrate.aspx';
+  const url = readEnv('WECHAT_RATE_URL') || 'http://pay.noveltypay.com/wechatrate.aspx';
   try {
     const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) return null;
@@ -17,7 +29,7 @@ async function fetchVendorRate(): Promise<number | null> {
 }
 
 export async function GET() {
-  const ttlSec = Number(process.env.RATE_CACHE_SEC || '300');
+  const ttlSec = Number(readEnv('RATE_CACHE_SEC') || '300');
   const now = Date.now();
   if (cachedRate && cachedRate.expires > now) {
     return new Response(
