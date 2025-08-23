@@ -12,6 +12,13 @@ export async function GET(req: Request) {
       { status: 400, headers: { 'Content-Type': 'application/json' } }
     );
   }
+  // 新增：reference 基本格式校验（仅允许字母/数字/下划线/横线，长度 8-64）
+  if (!/^[A-Za-z0-9_-]{8,64}$/.test(reference)) {
+    return new Response(
+      JSON.stringify({ error: 'INVALID_REFERENCE' }),
+      { status: 400, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
 
   let cfEnv: Record<string, string> | undefined;
   try {
@@ -40,7 +47,7 @@ export async function GET(req: Request) {
 
   if (!res.ok) {
     return new Response(
-      JSON.stringify({ error: 'STATUS_FETCH_FAILED' }),
+      JSON.stringify({ error: 'STATUS_FETCH_FAILED', upstream_status: res.status }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }

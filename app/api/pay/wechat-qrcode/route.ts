@@ -6,6 +6,46 @@ import { getRequestContext } from '@cloudflare/next-on-pages';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    // 新增：参数白名单校验与净化
+    const allowedAmounts = new Set([990, 1990, 2990]);
+    const allowedPlans = new Set(['support-990', 'support-1990', 'support-2990']);
+    const allowedCurrency = 'CNY';
+    const allowedVendor = 'wechatpay';
+    const allowedDuration = 'oneoff';
+
+    const num = typeof body?.amount === 'number' ? body.amount : Number(body?.amount);
+    const plan = typeof body?.plan === 'string' ? body.plan : '';
+    const currency = typeof body?.currency === 'string' ? body.currency : '';
+    const vendor = typeof body?.vendor === 'string' ? body.vendor : '';
+    const duration = typeof body?.duration === 'string' ? body.duration : '';
+
+    const valid = Number.isFinite(num) && allowedAmounts.has(num) &&
+      allowedPlans.has(plan) && currency === allowedCurrency &&
+      vendor === allowedVendor && duration === allowedDuration;
+
+    if (!valid) {
+      return new Response(
+        JSON.stringify({ error: 'INVALID_ORDER_PARAMS' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const payload: Record<string, unknown> = {
+      amount: num,
+      currency: allowedCurrency,
+      vendor: allowedVendor,
+      plan,
+      duration: allowedDuration,
+    };
+    if (typeof body?.description === 'string' && body.description.length <= 256) {
+      payload.description = body.description;
+    }
+    if (typeof body?.customerName === 'string' && body.customerName.length <= 128) {
+      payload.customerName = body.customerName;
+    }
+    if (typeof body?.customerEmail === 'string' && body.customerEmail.length <= 256) {
+      payload.customerEmail = body.customerEmail;
+    }
 
     let cfEnv: Record<string, string> | undefined;
     try {
@@ -30,7 +70,7 @@ export async function POST(req: Request) {
         'Content-Type': 'application/json',
         'X-Internal-Token': internalToken,
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(payload),
       cache: 'no-store',
     });
 
