@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 export const runtime = 'edge';
 
-import { getRequestContext } from '@cloudflare/next-on-pages/runtime';
+import { getRequestContext } from '@cloudflare/next-on-pages';
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
