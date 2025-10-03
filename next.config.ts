@@ -17,7 +17,7 @@ const securityHeaders = [
       // 补充 script-src-elem 以覆盖更广的浏览器实现
       `script-src-elem ${scriptSrc}`,
       "style-src 'self' 'unsafe-inline'",
-      "font-src 'self' data:",
+      "font-src 'self' data: https://static.cloudflareinsights.com https://cdnjs.cloudflare.com",
       // 放行所有 https 连接（含主站 API 与 Cloudflare Insights 上报）
       "connect-src 'self' https:",
       "frame-ancestors 'none'",
