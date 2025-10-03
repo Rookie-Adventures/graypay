@@ -4,6 +4,11 @@ compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".vercel/output/static"
 
+# 环境变量配置
+[vars]
+MAIN_BACKEND_URL = "https://neurathm.com"
+# 注意：敏感的 PAY_PROXY_TOKEN 不要写在这里！使用 wrangler secret 命令或 Dashboard 的加密变量
+
 [observability]
 enabled = true
 
