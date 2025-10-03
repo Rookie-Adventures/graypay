@@ -7,8 +7,8 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     // 新增：参数白名单校验与净化
-    const allowedAmounts = new Set([990, 1990, 2990]);
-    const allowedPlans = new Set(['support-990', 'support-1990', 'support-2990']);
+    const allowedAmounts = new Set([399, 799, 1299]);
+    const allowedPlans = new Set(['support-399', 'support-799', 'support-1299']);
     const allowedCurrency = 'CNY';
     const allowedVendor = 'wechatpay';
     const allowedDuration = 'oneoff';

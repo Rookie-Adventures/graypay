@@ -17,7 +17,7 @@ type QrResponse = {
 
 type StatusResponse = { status: 'pending' | 'completed' };
 
-const CNY_AMOUNTS = [990, 1990, 2990] as const;
+const CNY_AMOUNTS = [399, 799, 1299] as const;
 
 export default function WechatPayPage() {
   const router = useRouter();
@@ -137,11 +137,11 @@ export default function WechatPayPage() {
         currency: 'CNY',
         vendor: 'wechatpay',
         plan:
-          selectedAmount === 990
-            ? 'support-990'
-            : selectedAmount === 1990
-            ? 'support-1990'
-            : 'support-2990',
+          selectedAmount === 399
+            ? 'support-399'
+            : selectedAmount === 799
+            ? 'support-799'
+            : 'support-1299',
         duration: 'oneoff',
       };
       const res = await fetch('/api/pay/wechat-qrcode', {
@@ -194,11 +194,11 @@ export default function WechatPayPage() {
         currency: 'CNY',
         vendor: 'wechatpay',
         plan:
-          selectedAmount === 990
-            ? 'support-990'
-            : selectedAmount === 1990
-            ? 'support-1990'
-            : 'support-2990',
+          selectedAmount === 399
+            ? 'support-399'
+            : selectedAmount === 799
+            ? 'support-799'
+            : 'support-1299',
         duration: 'oneoff',
       };
       const res = await fetch('/api/pay/wechat-qrcode', {
